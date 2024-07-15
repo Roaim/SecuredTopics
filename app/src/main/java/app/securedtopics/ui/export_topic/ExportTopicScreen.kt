@@ -1,4 +1,4 @@
-package app.securedtopics.ui.topic
+package app.securedtopics.ui.export_topic
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -6,8 +6,10 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ImportExport
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -22,28 +24,34 @@ import app.securedtopics.ui.Screen
 import app.securedtopics.ui.common.BasicAppBar
 import app.securedtopics.ui.common.BasicButton
 
+data class ExportTopicUiState(
+    val topic: Topic? = null,
+    val loading: Boolean = false
+)
+
 @Composable
-fun TopicScreen(
-    viewModel: TopicViewModel = hiltViewModel(),
+fun ExportTopicScreen(
+    viewModel: ExportTopicViewModel = hiltViewModel(),
     onNav: (String) -> Unit
 ) {
     val topicUi by viewModel.uiState.collectAsState()
 
     val topic = topicUi.topic
     if (topic == null) NavErrorScreen(message = "Topic not found.", onNav = onNav)
-    else TopicContent(topic, onNav = onNav)
+    else ExportTopicContent(topic, onNav = onNav, onExportTopic = viewModel::exportTopic)
 }
 
 @Composable
-fun TopicContent(
+fun ExportTopicContent(
     topic: Topic,
+    onExportTopic: (() -> Unit)? = null,
     onNav: ((String) -> Unit)? = null
 ) {
     Scaffold(
         Modifier.fillMaxSize(),
         topBar = {
             BasicAppBar(
-                title = topic.name,
+                title = "Export Topic",
                 onBack = { onNav?.invoke(Screen.Back.route) }
             )
         }
@@ -58,10 +66,14 @@ fun TopicContent(
                 verticalArrangement = Arrangement.spacedBy(8.dp),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                if (onNav != null) BasicButton(
+                Text(text = "Topic Info", style = MaterialTheme.typography.titleMedium)
+                Text(text = topic.id)
+                Text(text = topic.name)
+                Text(text = topic.key)
+                if (onExportTopic != null) BasicButton(
                     title = "Export Topic",
                     icon = Icons.Filled.ImportExport,
-                    onClick = { onNav("${Screen.ExportTopic.route}/${topic.id}") }
+                    onClick = onExportTopic
                 )
             }
         }
@@ -70,6 +82,6 @@ fun TopicContent(
 
 @Preview
 @Composable
-private fun TopicContentPreview() {
-    TopicContent(topic = Topic("Hello", "ax", "1"))
+private fun ExportTopicContentPreview() {
+    ExportTopicContent(topic = Topic("Hello", "ax", "1"), onExportTopic = {})
 }

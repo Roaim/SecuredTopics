@@ -23,17 +23,19 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import app.securedtopics.ui.common.BasicAppBar
+import app.securedtopics.ui.export_topic.ExportTopicScreen
 import app.securedtopics.ui.home.HomeScreen
 import app.securedtopics.ui.import_topic.ImportTopicScreen
 import app.securedtopics.ui.topic.TopicScreen
 
-private const val ARG_TOPIC_ID = "topicId"
+const val ARG_TOPIC_ID = "topicId"
 
-enum class Screen(val route: String, var args: String? = null) {
+enum class Screen(val route: String) {
     Home("home"),
     Back("back"),
     ImportTopic("import-topic"),
     Topic("topic"),
+    ExportTopic("export-topic")
 }
 
 @Composable
@@ -47,12 +49,22 @@ fun SecuredTopicNavHost(
             "${Screen.Topic.route}/{$ARG_TOPIC_ID}",
             arguments = listOf(navArgument(ARG_TOPIC_ID) { type = NavType.StringType })
         ) { backStack ->
-            val topicId = backStack.arguments?.getString(ARG_TOPIC_ID)
-            if (topicId != null) TopicScreen(topicId, onNav = navController::navigateTo)
+            if (backStack.arguments?.getString(ARG_TOPIC_ID) != null)
+                TopicScreen(onNav = navController::navigateTo)
             else NavErrorScreen(
                 message = "Topic id must be provided", onNav = navController::navigateTo
             )
 
+        }
+        composable(
+            "${Screen.ExportTopic.route}/{$ARG_TOPIC_ID}",
+            arguments = listOf(navArgument(ARG_TOPIC_ID) { type = NavType.StringType })
+        ) { backstack ->
+            if (backstack.arguments?.getString(ARG_TOPIC_ID) != null)
+                ExportTopicScreen(onNav = navController::navigateTo)
+            else NavErrorScreen(
+                message = "Topic id must be provided", onNav = navController::navigateTo
+            )
         }
     }
 }
