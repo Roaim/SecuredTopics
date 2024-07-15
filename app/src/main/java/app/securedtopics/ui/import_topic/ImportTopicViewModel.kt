@@ -2,20 +2,19 @@ package app.securedtopics.ui.import_topic
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import app.securedtopics.crypto.key.CryptoKey
+import app.securedtopics.crypto.key.KeyPairProvider
 import app.securedtopics.data.model.Topic
-import app.securedtopics.di.Asymmetric
+import app.securedtopics.di.AsymmetricStore
 import app.securedtopics.domain.DecryptTopicUseCase
 import app.securedtopics.domain.SaveTopicUseCase
 import app.securedtopics.utils.ClipboardService
+import app.securedtopics.utils.FlowState
 import app.securedtopics.utils.base64
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -27,26 +26,22 @@ data class ImportTopicUiState(
 
 @HiltViewModel
 class ImportTopicViewModel @Inject constructor(
-    @Asymmetric private val cryptoKey: CryptoKey,
-    private val clipboardService: ClipboardService,
     private val decryptTopicUseCase: DecryptTopicUseCase,
     private val saveTopicUseCase: SaveTopicUseCase,
-) : ViewModel() {
+    private val clipboardService: ClipboardService,
+    @AsymmetricStore private val keyPairProvider: KeyPairProvider,
+) : ViewModel(), FlowState {
 
     private val _publicKey = MutableStateFlow<String?>(null)
     private val _topic = MutableStateFlow<Topic?>(null)
 
     val uiState: StateFlow<ImportTopicUiState> = _publicKey.combine(_topic) { pubKey, topic ->
         ImportTopicUiState(publicKey = pubKey, topic = topic)
-    }.stateIn(
-        viewModelScope,
-        SharingStarted.WhileSubscribed(),
-        ImportTopicUiState(loading = true)
-    )
+    }.stateInWhileSubscribed(viewModelScope, ImportTopicUiState(loading = true))
 
     init {
         viewModelScope.launch(Dispatchers.Default) {
-            _publicKey.emit(cryptoKey.encryptKey.encoded.base64)
+            _publicKey.emit(keyPairProvider.keyPair.public.encoded.base64)
         }
     }
 

@@ -1,13 +1,14 @@
 package app.securedtopics.di
 
+import android.security.keystore.KeyGenParameterSpec
+import androidx.security.crypto.MasterKeys
 import app.securedtopics.crypto.AsymmetricCryptography
 import app.securedtopics.crypto.Cryptography
 import app.securedtopics.crypto.SymmetricCryptography
-import app.securedtopics.crypto.key.AsymmetricStoreKey
-import app.securedtopics.crypto.key.AsymmetricStoreKeyInfo
-import app.securedtopics.crypto.key.CryptoKey
-import app.securedtopics.crypto.key.MasterKey
-import app.securedtopics.crypto.key.StoreKeyInfo
+import app.securedtopics.crypto.key.KeyPairProvider
+import app.securedtopics.crypto.key.SecretKeyProvider
+import app.securedtopics.crypto.key.StoreKeyPairProvider
+import app.securedtopics.crypto.key.StoreSecretKeyProvider
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -18,29 +19,31 @@ import javax.inject.Singleton
 @Module
 @InstallIn(SingletonComponent::class)
 object CryptoModule {
-    @Provides
-    @Singleton
-    @Asymmetric
-    fun provideAsymmetricKeyInfo(): StoreKeyInfo = AsymmetricStoreKeyInfo()
 
     @Provides
     @SymmetricMaster
-    fun provideMasterKey(): CryptoKey = MasterKey
-
-    @Provides
-    @Singleton
-    @Asymmetric
-    fun provideImportTopicKey(@Asymmetric info: StoreKeyInfo): CryptoKey = AsymmetricStoreKey(info)
+    fun provideMasterParamSpec(): KeyGenParameterSpec = MasterKeys.AES256_GCM_SPEC
 
     @Provides
     @SymmetricMaster
-    fun provideMasterCryptography(@SymmetricMaster cryptoKey: CryptoKey): Cryptography =
-        SymmetricCryptography(cryptoKey)
+    fun provideMasterKey(@SymmetricMaster params: KeyGenParameterSpec): SecretKeyProvider =
+        StoreSecretKeyProvider(alias = MasterKeys.getOrCreate(params), keyGenParams = params)
 
     @Provides
-    @Asymmetric
-    fun provideAsymmetricCryptography(@Asymmetric cryptoKey: CryptoKey): Cryptography =
-        AsymmetricCryptography(cryptoKey)
+    @SymmetricMaster
+    fun provideMasterCryptography(@SymmetricMaster keyProvider: SecretKeyProvider): Cryptography =
+        SymmetricCryptography(keyProvider)
+
+    @Provides
+    @Singleton
+    @AsymmetricStore
+    fun provideStoreKeyPair(): KeyPairProvider = StoreKeyPairProvider()
+
+    @Provides
+    @AsymmetricStore
+    fun provideAsymmetricCryptography(@AsymmetricStore keyProvider: KeyPairProvider): Cryptography =
+        AsymmetricCryptography(keyProvider)
+
 }
 
 @Qualifier
@@ -49,4 +52,4 @@ annotation class SymmetricMaster
 
 @Qualifier
 @Retention(AnnotationRetention.BINARY)
-annotation class Asymmetric
+annotation class AsymmetricStore

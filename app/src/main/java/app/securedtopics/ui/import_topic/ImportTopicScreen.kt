@@ -16,6 +16,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -71,7 +72,24 @@ fun ImportTopicContent(
                     BasicButton(title = "Copy Public Key", icon = Icons.Filled.ContentCopy) {
                         onCopy?.invoke(publicKey)
                     }
-                    BasicButton(title = "Paste Topic", icon = Icons.Filled.ContentPaste) {
+                    Text(
+                        text = "Instruction",
+                        fontWeight = FontWeight.Bold,
+                        style = MaterialTheme.typography.titleMedium
+                    )
+                    Text(
+                        text = "\t1. Share the public key with the person you want to import the topic from.",
+                        style = MaterialTheme.typography.bodyMedium
+                    )
+                    Text(
+                        text = "\t2. The person will encrypt the topic info with your public key and share it with you.",
+                        style = MaterialTheme.typography.bodyMedium
+                    )
+                    Text(
+                        text = "\t3. Copy the encrypted topic info to import it using the Import Topic button.",
+                        style = MaterialTheme.typography.bodyMedium
+                    )
+                    BasicButton(title = "Import Topic", icon = Icons.Filled.ContentPaste) {
                         onImport?.invoke()
                     }
                 }

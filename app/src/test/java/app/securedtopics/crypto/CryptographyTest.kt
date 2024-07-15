@@ -1,7 +1,7 @@
 package app.securedtopics.crypto
 
-import app.securedtopics.crypto.key.AsymmetricKey
-import app.securedtopics.crypto.key.SymmetricKey
+import app.securedtopics.crypto.key.TemporaryKeyPairProvider
+import app.securedtopics.crypto.key.TemporarySecretKeyProvider
 import app.securedtopics.utils.DefaultBase64Encoder
 import app.securedtopics.utils.JavaBase64Encoder
 import app.securedtopics.utils.base64
@@ -19,7 +19,7 @@ class CryptographyTest {
 
     @Test
     fun symmetric_encrypt_decrypt() {
-        val encryption = SymmetricCryptography(SymmetricKey())
+        val encryption = SymmetricCryptography(TemporarySecretKeyProvider())
         val text = "Hello Secret Text"
         println("Base64: ${text.toByteArray().base64}")
         val encrypted = encryption.encrypt(text.toByteArray())
@@ -32,7 +32,7 @@ class CryptographyTest {
 
     @Test
     fun asymmetric_encrypt_decrypt() {
-        val encryption = AsymmetricCryptography(AsymmetricKey())
+        val encryption = AsymmetricCryptography(TemporaryKeyPairProvider())
         val text = "Hello Secret Text"
         println("Base64: ${text.toByteArray().base64}")
         val encrypted = encryption.encrypt(text.toByteArray())

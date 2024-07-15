@@ -5,7 +5,8 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ContentCopy
+import androidx.compose.material.icons.filled.ImportExport
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -15,6 +16,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import app.securedtopics.data.model.Topic
@@ -36,11 +38,15 @@ fun TopicScreen(
     }
     val topic = topicUi.topic
     if (topic == null) NavErrorScreen(message = "Topic with id: $topicId not found.", onNav = onNav)
-    else TopicContent(topic, onNav = onNav, onCopyTopic = viewModel::copyTopicToClipboard)
+    else TopicContent(topic, onNav = onNav, onExportTopic = viewModel::exportTopic)
 }
 
 @Composable
-fun TopicContent(topic: Topic, onCopyTopic: () -> Unit, onNav: ((String) -> Unit)? = null) {
+fun TopicContent(
+    topic: Topic,
+    onExportTopic: (() -> Unit)? = null,
+    onNav: ((String) -> Unit)? = null
+) {
     Scaffold(
         Modifier.fillMaxSize(),
         topBar = {
@@ -59,15 +65,22 @@ fun TopicContent(topic: Topic, onCopyTopic: () -> Unit, onNav: ((String) -> Unit
                 verticalArrangement = Arrangement.spacedBy(8.dp),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
+                Text(text = "Topic Info", style = MaterialTheme.typography.titleMedium)
                 Text(text = topic.id)
                 Text(text = topic.name)
                 Text(text = topic.key)
-                BasicButton(
-                    title = "Copy Topic",
-                    icon = Icons.Filled.ContentCopy,
-                    onClick = onCopyTopic
+                if (onExportTopic != null) BasicButton(
+                    title = "Export Topic",
+                    icon = Icons.Filled.ImportExport,
+                    onClick = onExportTopic
                 )
             }
         }
     }
+}
+
+@Preview
+@Composable
+private fun TopicContentPreview() {
+    TopicContent(topic = Topic("Hello", "ax", "1"), onExportTopic = {})
 }
