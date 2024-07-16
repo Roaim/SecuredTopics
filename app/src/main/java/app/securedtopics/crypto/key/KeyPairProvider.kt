@@ -49,7 +49,7 @@ class EncodedKeyPairProvider(
 
 }
 
-class TemporaryKeyPairProvider(
+class RandomKeyPairProvider(
     algorithm: String = KEY_ALGORITHM_ASYMMETRIC,
     private val keySize: Int = KEY_SIZE_ASYMMETRIC,
     private val keyPairGenerator: KeyPairGenerator = KeyPairGenerator.getInstance(algorithm),

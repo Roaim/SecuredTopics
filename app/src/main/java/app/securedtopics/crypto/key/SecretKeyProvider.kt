@@ -28,7 +28,7 @@ class RawSecretKeyProvider(
     }
 }
 
-class TemporarySecretKeyProvider(
+class RandomSecretKeyProvider(
     algorithm: String = KEY_ALGORITHM_SYMMETRIC,
     override val keySize: Int = KEY_SIZE_SYMMETRIC,
     private val keyGenerator: KeyGenerator = KeyGenerator.getInstance(algorithm)
