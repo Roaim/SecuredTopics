@@ -11,10 +11,10 @@ import kotlinx.coroutines.flow.Flow
 @Dao
 interface TopicDao {
 
-    @Query("SELECT * FROM topic")
+    @Query("SELECT * FROM topics")
     fun getAll(): Flow<List<LocalTopic>>
 
-    @Query("SELECT * FROM topic WHERE id = :id limit 1")
+    @Query("SELECT * FROM topics WHERE id = :id limit 1")
     fun getById(id: String): Flow<LocalTopic?>
 
     @Insert(onConflict = OnConflictStrategy.IGNORE)

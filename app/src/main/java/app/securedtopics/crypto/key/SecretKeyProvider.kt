@@ -3,6 +3,7 @@ package app.securedtopics.crypto.key
 import android.security.keystore.KeyGenParameterSpec
 import android.security.keystore.KeyProperties
 import java.security.KeyStore
+import java.security.spec.AlgorithmParameterSpec
 import javax.crypto.KeyGenerator
 import javax.crypto.SecretKey
 import javax.crypto.spec.SecretKeySpec
@@ -12,17 +13,17 @@ interface SecretKeyProvider {
     val secretKey: SecretKey
 
     companion object {
-        fun fromRawKey(
-            rawKey: ByteArray, algorithm: String = KEY_ALGORITHM_SYMMETRIC
-        ): SecretKeyProvider = RawSecretKeyProvider(rawKey, algorithm)
+        fun fromEncoded(
+            encodedKey: ByteArray, algorithm: String = KEY_ALGORITHM_SYMMETRIC
+        ): SecretKeyProvider = EncodedSecretKeyProvider(encodedKey, algorithm)
     }
 }
 
-class RawSecretKeyProvider(
-    private val rawKey: ByteArray,
-    private val algorithm: String = KEY_ALGORITHM_SYMMETRIC
+class EncodedSecretKeyProvider(
+    rawKey: ByteArray,
+    private val algorithm: String = KEY_ALGORITHM_SYMMETRIC,
+    override val keySize: Int = KEY_SIZE_SYMMETRIC,
 ) : SecretKeyProvider {
-    override val keySize: Int = KEY_SIZE_SYMMETRIC
     override val secretKey: SecretKey by lazy {
         SecretKeySpec(rawKey, algorithm)
     }
@@ -50,7 +51,7 @@ class StoreSecretKeyProvider(
     algorithm: String = KEY_ALGORITHM_SYMMETRIC,
     override val keySize: Int = KEY_SIZE_SYMMETRIC,
     private val keyStore: KeyStore = KeyStore.getInstance(provider),
-    private val keyGenParams: KeyGenParameterSpec = KeyGenParameterSpec.Builder(
+    private val keyGenParams: AlgorithmParameterSpec = KeyGenParameterSpec.Builder(
         alias, KeyProperties.PURPOSE_ENCRYPT or KeyProperties.PURPOSE_DECRYPT
     ).setBlockModes(KeyProperties.BLOCK_MODE_GCM)
         .setEncryptionPaddings(KeyProperties.ENCRYPTION_PADDING_NONE)

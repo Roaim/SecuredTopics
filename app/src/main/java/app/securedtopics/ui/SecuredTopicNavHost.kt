@@ -12,10 +12,13 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
@@ -27,6 +30,8 @@ import app.securedtopics.ui.export_topic.ExportTopicScreen
 import app.securedtopics.ui.home.HomeScreen
 import app.securedtopics.ui.import_topic.ImportTopicScreen
 import app.securedtopics.ui.topic.TopicScreen
+import app.securedtopics.ui.user.AppUserScreen
+import app.securedtopics.ui.user.AppUserViewModel
 
 const val ARG_TOPIC_ID = "topicId"
 
@@ -40,9 +45,12 @@ enum class Screen(val route: String) {
 
 @Composable
 fun SecuredTopicNavHost(
-    navController: NavHostController = rememberNavController()
+    navController: NavHostController = rememberNavController(),
+    userViewModel: AppUserViewModel = hiltViewModel(),
 ) {
-    NavHost(navController = navController, startDestination = Screen.Home.route) {
+    val appUser by userViewModel.appUser.collectAsState()
+    if (appUser == null) AppUserScreen { username -> userViewModel.saveAppUser(username) }
+    else NavHost(navController = navController, startDestination = Screen.Home.route) {
         composable(Screen.Home.route) { HomeScreen(onNav = navController::navigateTo) }
         composable(Screen.ImportTopic.route) { ImportTopicScreen(onNav = navController::navigateTo) }
         composable(

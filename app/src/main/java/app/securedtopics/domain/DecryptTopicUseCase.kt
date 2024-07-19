@@ -24,7 +24,7 @@ class DecryptTopicUseCase @Inject constructor(
             val topicData = ByteArray(remaining())
             get(topicData)
             val key = asymmetricCrypto.decrypt(keyEncrypted) ?: return@run null
-            val secretKeyProvider = SecretKeyProvider.fromRawKey(key)
+            val secretKeyProvider = SecretKeyProvider.fromEncoded(key)
             val symmetricCrypto = SymmetricCryptography(secretKeyProvider)
             symmetricCrypto.decrypt(topicData)
                 ?.decodeToString()

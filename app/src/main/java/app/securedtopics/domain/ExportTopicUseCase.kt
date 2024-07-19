@@ -25,7 +25,7 @@ class ExportTopicUseCase @Inject constructor(
         val keyPairProvider = KeyPairProvider.fromEncoded(publicKeyEncoded)
         val asymmetricCrypto = AsymmetricCryptography(keyPairProvider)
         val key = masterCryptography.decrypt(topic.key.base64decode) ?: return@withContext false
-        val secretKeyProvider = SecretKeyProvider.fromRawKey(key)
+        val secretKeyProvider = SecretKeyProvider.fromEncoded(key)
         val symmetricCrypto = SymmetricCryptography(secretKeyProvider)
         val message = symmetricCrypto.encrypt(topic.json.toByteArray()) ?: return@withContext false
         val encryptedKey = asymmetricCrypto.encrypt(key) ?: return@withContext false
