@@ -33,7 +33,7 @@ class SecretKeyProviderTest {
                 randomProvider.secretKey.encoded,
                 keySize = randomProvider.keySize
             )
-        assertEquals(randomProvider.keySize, randomProvider.keySize)
+        assertEquals(randomProvider.keySize, rawProvider.keySize)
         assertEquals(randomProvider.secretKey.encoded.base64, rawProvider.secretKey.encoded.base64)
     }
 
