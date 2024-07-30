@@ -15,7 +15,7 @@ interface TopicDao {
     fun getAll(): Flow<List<LocalTopic>>
 
     @Query("SELECT * FROM topics WHERE id = :id limit 1")
-    fun getById(id: String): Flow<LocalTopic?>
+    suspend fun getById(id: String): LocalTopic?
 
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun save(topic: LocalTopic)

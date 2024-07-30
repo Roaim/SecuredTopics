@@ -3,6 +3,7 @@ package app.securedtopics.di
 import android.content.Context
 import androidx.room.Room
 import app.securedtopics.data.local.AppDatabase
+import app.securedtopics.data.local.dao.MessageDao
 import app.securedtopics.data.local.dao.TopicDao
 import dagger.Module
 import dagger.Provides
@@ -28,5 +29,9 @@ object DatabaseModule {
     @Provides
     @Singleton
     fun provideTopicDao(appDatabase: AppDatabase): TopicDao = appDatabase.topicDao()
+
+    @Provides
+    @Singleton
+    fun provideMessageDao(appDatabase: AppDatabase): MessageDao = appDatabase.messageDao()
 
 }

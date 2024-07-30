@@ -15,6 +15,8 @@ data class LocalMessage(
     val sender: String,
     @ColumnInfo(name = "content")
     val content: String,
+    @ColumnInfo(name = "publishedAt")
+    val publishedAt: Long,
     @ColumnInfo(name = "timestamp")
     val timestamp: Long
 )

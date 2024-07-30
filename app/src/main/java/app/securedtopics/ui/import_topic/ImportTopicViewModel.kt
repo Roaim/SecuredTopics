@@ -5,7 +5,7 @@ import androidx.lifecycle.viewModelScope
 import app.securedtopics.crypto.key.KeyPairProvider
 import app.securedtopics.data.model.Topic
 import app.securedtopics.di.AsymmetricStore
-import app.securedtopics.domain.DecryptTopicUseCase
+import app.securedtopics.domain.DecryptClipboardTopicUseCase
 import app.securedtopics.domain.SaveTopicUseCase
 import app.securedtopics.utils.ClipboardService
 import app.securedtopics.utils.FlowState
@@ -26,7 +26,7 @@ data class ImportTopicUiState(
 
 @HiltViewModel
 class ImportTopicViewModel @Inject constructor(
-    private val decryptTopicUseCase: DecryptTopicUseCase,
+    private val decryptClipboardTopicUseCase: DecryptClipboardTopicUseCase,
     private val saveTopicUseCase: SaveTopicUseCase,
     private val clipboardService: ClipboardService,
     @AsymmetricStore private val keyPairProvider: KeyPairProvider,
@@ -41,7 +41,8 @@ class ImportTopicViewModel @Inject constructor(
 
     init {
         viewModelScope.launch(Dispatchers.Default) {
-            _publicKey.emit(keyPairProvider.keyPair.public.encoded.base64)
+            val publicKeyEncoded = keyPairProvider.keyPair.public.encoded.base64
+            _publicKey.emit(publicKeyEncoded)
         }
     }
 
@@ -49,12 +50,10 @@ class ImportTopicViewModel @Inject constructor(
         clipboardService.copyToClipboard(pubKey, "PublicKey")
     }
 
-    fun importTopic() {
-        val topic = decryptTopicUseCase() ?: return
-        viewModelScope.launch {
-            val savedTopic = saveTopicUseCase(topic)
-            _topic.emit(savedTopic)
-        }
+    fun importTopic() = viewModelScope.launch {
+        val topic = decryptClipboardTopicUseCase() ?: return@launch
+        val savedTopic = saveTopicUseCase(topic)
+        _topic.emit(savedTopic)
     }
 
 }

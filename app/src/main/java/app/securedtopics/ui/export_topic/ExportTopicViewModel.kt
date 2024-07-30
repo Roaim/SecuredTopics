@@ -16,6 +16,10 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
+data class ExportTopicUiState(
+    val topic: Topic? = null,
+    val loading: Boolean = false
+)
 
 @HiltViewModel
 class ExportTopicViewModel @Inject constructor(

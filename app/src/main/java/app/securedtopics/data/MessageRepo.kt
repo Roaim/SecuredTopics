@@ -17,8 +17,8 @@ class MessageRepo @Inject constructor(
     val messages: Flow<List<Message>>
         get() = messageDao.getAll().map { list -> list.map { it.asExternal } }
 
-    fun messagesByTopic(topicId: String): Flow<List<Message>> =
-        messageDao.getAllByTopic(topicId).map { list -> list.map { it.asExternal } }
+    suspend fun messagesByTopic(topicId: String): List<Message> =
+        messageDao.getAllByTopic(topicId).map { list -> list.asExternal }
 
     suspend fun saveMessage(message: Message) = messageDao.save(message.asLocal)
 

@@ -24,11 +24,6 @@ import app.securedtopics.ui.Screen
 import app.securedtopics.ui.common.BasicAppBar
 import app.securedtopics.ui.common.BasicButton
 
-data class ExportTopicUiState(
-    val topic: Topic? = null,
-    val loading: Boolean = false
-)
-
 @Composable
 fun ExportTopicScreen(
     viewModel: ExportTopicViewModel = hiltViewModel(),
@@ -51,7 +46,7 @@ fun ExportTopicContent(
         Modifier.fillMaxSize(),
         topBar = {
             BasicAppBar(
-                title = "Export Topic",
+                title = "Export",
                 onBack = { onNav?.invoke(Screen.Back.route) }
             )
         }
@@ -83,5 +78,8 @@ fun ExportTopicContent(
 @Preview
 @Composable
 private fun ExportTopicContentPreview() {
-    ExportTopicContent(topic = Topic("Hello", "ax", "1"), onExportTopic = {})
+    ExportTopicContent(
+        topic = Topic("Hello", "ax", "1"),
+        onExportTopic = {}
+    )
 }

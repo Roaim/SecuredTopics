@@ -9,6 +9,7 @@ val Message.asLocal: LocalMessage
         topicId = topicId,
         sender = sender,
         content = content,
+        publishedAt = publishedAt,
         timestamp = timestamp
     )
 
@@ -18,5 +19,6 @@ val LocalMessage.asExternal: Message
         topicId = topicId,
         sender = sender,
         content = content,
+        publishedAt = publishedAt,
         timestamp = timestamp
     )

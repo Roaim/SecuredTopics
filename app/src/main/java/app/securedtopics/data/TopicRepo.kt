@@ -16,7 +16,7 @@ class TopicRepo @Inject constructor(private val topicDao: TopicDao) {
         list.map { it.asExternal }
     }
 
-    fun getTopic(id: String): Flow<Topic?> = topicDao.getById(id).map { it?.asExternal }
+    suspend fun getTopic(id: String): Topic? = topicDao.getById(id)?.asExternal
 
     suspend fun saveTopic(topic: Topic) {
         topicDao.save(topic.asLocal)

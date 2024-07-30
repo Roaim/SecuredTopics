@@ -5,7 +5,6 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.Button
@@ -55,6 +54,13 @@ fun BasicButton(
             Icon(imageVector = icon, contentDescription = title)
             Text(text = title)
         }
+    }
+}
+
+@Composable
+fun BasicIconButton(icon: ImageVector, contentDesc: String = "Icon Button", onClick: () -> Unit) {
+    IconButton(onClick = onClick) {
+        Icon(imageVector = icon, contentDescription = contentDesc)
     }
 }
 

@@ -9,16 +9,18 @@ import app.securedtopics.utils.ClipboardService
 import app.securedtopics.utils.base64
 import app.securedtopics.utils.base64decode
 import app.securedtopics.utils.fromJson
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import java.nio.ByteBuffer
 import javax.inject.Inject
 
-class DecryptTopicUseCase @Inject constructor(
+class DecryptClipboardTopicUseCase @Inject constructor(
     private val clipboardService: ClipboardService,
     @AsymmetricStore private val asymmetricCrypto: Cryptography,
 ) {
-    operator fun invoke(): Topic? {
-        val topicMessage = clipboardService.clipboardText ?: return null
-        return ByteBuffer.wrap(topicMessage.base64decode).run {
+    suspend operator fun invoke(): Topic? = withContext(Dispatchers.Default) {
+        val topicMessage = clipboardService.clipboardText ?: return@withContext null
+        ByteBuffer.wrap(topicMessage.base64decode).run {
             val keyEncrypted = ByteArray(int)
             get(keyEncrypted)
             val topicData = ByteArray(remaining())

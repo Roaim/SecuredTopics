@@ -11,8 +11,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.ImportExport
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Card
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
@@ -35,6 +33,7 @@ import app.securedtopics.data.model.Topic
 import app.securedtopics.ui.Screen
 import app.securedtopics.ui.common.BasicAppBar
 import app.securedtopics.ui.common.BasicButton
+import app.securedtopics.ui.common.BasicIconButton
 import app.securedtopics.ui.common.BasicProgress
 import app.securedtopics.ui.theme.SecuredTopicsTheme
 
@@ -60,9 +59,7 @@ fun HomeContent(
 
     Scaffold(topBar = {
         BasicAppBar(stringResource(R.string.home), actions = {
-            if (onImport != null) IconButton(onClick = onImport) {
-                Icon(imageVector = Icons.Rounded.ImportExport, contentDescription = "Import Topic")
-            }
+            if (onImport != null) BasicIconButton(Icons.Rounded.ImportExport, onClick = onImport)
         })
     }) {
         Surface(
@@ -122,7 +119,7 @@ fun AddTopicDialog(onDismiss: () -> Unit, onAdd: (String) -> Unit) {
 @Composable
 fun TopicItem(topic: Topic, modifier: Modifier = Modifier, onClick: () -> Unit) {
     Card(onClick = onClick, modifier.fillMaxWidth()) {
-        Text(text = topic.name, modifier = Modifier.padding(8.dp))
+        Text(text = topic.name, modifier = Modifier.padding(12.dp))
     }
 }
 
