@@ -43,7 +43,7 @@ Press the Add Topic button on the home screen.
 Contributions are welcome! Please create a pull request with detailed information on the changes.
 
 ### License
-This project is licensed under the MIT License. See the LICENSE file for details.
+This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
 
 ### Contact
 For any inquiries or feedback, please contact roaimahmed@gmail.com.
