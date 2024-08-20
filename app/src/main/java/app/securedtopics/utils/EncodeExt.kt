@@ -2,8 +2,8 @@ package app.securedtopics.utils
 
 import com.google.gson.GsonBuilder
 
-val ByteArray.base64: String get() = DefaultBase64Encoder.encode(this)
-val String.base64decode: ByteArray get() = DefaultBase64Encoder.decode(this)
+val ByteArray.base64: String get() = DefaultBase64Encoder.encode(this).trim()
+val String.base64decode: ByteArray get() = DefaultBase64Encoder.decode(trim())
 
 object DefaultBase64Encoder : Base64Encoder {
 

@@ -34,7 +34,9 @@ fun MessageTextField(modifier: Modifier = Modifier, onSend: (String) -> Unit) {
     Row(
         modifier
             .fillMaxWidth()
-            .padding(8.dp)
+            .padding(8.dp),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.spacedBy(8.dp)
     ) {
         OutlinedTextField(
             modifier = Modifier.weight(1f),
@@ -89,6 +91,12 @@ fun MessageItem(
             }
         }
     }
+}
+
+@Preview
+@Composable
+private fun MessageFieldPreview() {
+    MessageTextField {}
 }
 
 @Preview

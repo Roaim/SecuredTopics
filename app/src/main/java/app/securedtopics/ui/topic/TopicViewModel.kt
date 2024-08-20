@@ -15,11 +15,13 @@ import app.securedtopics.domain.ImportMessageUseCase
 import app.securedtopics.ui.ARG_TOPIC_ID
 import app.securedtopics.utils.FlowState
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.emptyFlow
+import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -43,19 +45,22 @@ class TopicViewModel @Inject constructor(
 ) : ViewModel(), FlowState {
 
     private val _topic: Flow<Topic?> = getTopicUseCase(savedStateHandle[ARG_TOPIC_ID])
-    private val _refresh = MutableStateFlow(0)
     private val _toast = MutableStateFlow<String?>(null)
 
-    val uiState: StateFlow<TopicUiState> = combine(_topic, _toast, _refresh) { topic, toast, _ ->
-        val messages = getDecryptedMessagesUseCase(topic?.id)
-        TopicUiState(topic = topic, messages = messages, toast = toast)
-    }.stateInWhileSubscribed(viewModelScope, TopicUiState(loading = true))
+    @OptIn(ExperimentalCoroutinesApi::class)
+    private val _messages = _topic.flatMapLatest { topic ->
+        getDecryptedMessagesUseCase(topic ?: return@flatMapLatest emptyFlow())
+    }
+
+    val uiState: StateFlow<TopicUiState> =
+        combine(_topic, _toast, _messages) { topic, toast, messages ->
+            TopicUiState(topic = topic, messages = messages, toast = toast)
+        }.stateInWhileSubscribed(viewModelScope, TopicUiState(loading = true))
 
     fun saveMessage(topic: Topic, message: String) = viewModelScope.launch {
         val encryptedMessage = encryptTextUseCase(topic.key, message) ?: return@launch
         val messageToSave = createMessageUseCase(topicId = topic.id, message = encryptedMessage)
         messageRepo.saveMessage(messageToSave)
-        refreshMessages()
     }
 
     fun exportMessage(message: Message) = viewModelScope.launch {
@@ -65,13 +70,8 @@ class TopicViewModel @Inject constructor(
     fun importMessage() = viewModelScope.launch {
         val msg = importMessageUseCase()
         _toast.emit(msg)
-        refreshMessages()
     }
 
     fun clearToast() = _toast.tryEmit(null)
-
-    private fun refreshMessages() = viewModelScope.launch {
-        _refresh.emit(_refresh.first().inc())
-    }
 
 }

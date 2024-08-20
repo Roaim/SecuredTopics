@@ -17,10 +17,7 @@ interface MessageDao {
     @Update
     suspend fun update(message: LocalMessage)
 
-    @Query("SELECT * FROM messages ORDER BY timestamp DESC")
-    fun getAll(): Flow<List<LocalMessage>>
-
     @Query("SELECT * FROM messages WHERE topicId = :topicId ORDER BY timestamp ASC")
-    suspend fun getAllByTopic(topicId: String): List<LocalMessage>
+    fun getMessagesByTopic(topicId: String): Flow<List<LocalMessage>>
 
 }
