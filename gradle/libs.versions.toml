@@ -1,7 +1,7 @@
 [versions]
 minSdk = "23"
 maxSdk = "34"
-version = "1.0.0"
+version = "1.0.1"
 agp = "8.3.2"
 kotlin = "1.9.0"
 coreKtx = "1.13.1"
